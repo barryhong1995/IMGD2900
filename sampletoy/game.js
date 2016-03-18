@@ -5,6 +5,7 @@
 // Mod 3: Changing click color to surroundings
 // Mod 4: Adding fading effect
 // Mod 5: Mixing color of beads on click
+// Mod 6: Adding random letter on click
 
 // game.js for Perlenspiel 3.1
 
@@ -114,7 +115,7 @@ PS.touch = function( x, y, data, options ) {
 		PS.color( x, y - 1, (r + sub.r)/2, (g + sub.g)/2, (b + sub.b)/2 ); // set bead color top
 	};
 	
-	// Mod 5: Adding random letter on click
+	// Mod 6: Adding random letter on click
 
 	c = PS.random(26) + 64; // limit to visible ASCII
 	PS.glyph( x, y, c );
