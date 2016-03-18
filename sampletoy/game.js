@@ -4,6 +4,7 @@
 // Mod 2: Changing click color from black to random
 // Mod 3: Changing click color to surroundings
 // Mod 4: Adding fading effect
+// Mod 5: Mixing color of beads on click
 
 // game.js for Perlenspiel 3.1
 
@@ -79,7 +80,7 @@ PS.init = function( system, options ) {
 
 PS.touch = function( x, y, data, options ) {
 	"use strict";
-	var r, g, b, c;
+	var r, g, b, c, sub;
 
 	// Uncomment the following line to inspect parameters
 	// PS.debug( "PS.touch() @ " + x + ", " + y + "\n" );
@@ -94,22 +95,23 @@ PS.touch = function( x, y, data, options ) {
 	b = PS.random(256) - 1; // random blue
 	
 	// Mod 3: Changing click color of surroundings
+	// Mod 5: Mixing color of beads on click
 	PS.color( x, y, r, g, b ); // set bead color center
 	if (x >= 1) {
-		PS.color( x - 1, y, r, g, b ); // set bead color left
-		PS.alpha( x - 1, y, 127 ); // set transparency
+		sub = PS.unmakeRGB( PS.color( x - 1, y ), {} );
+		PS.color( x - 1, y, (r + sub.r)/2, (g + sub.g)/2, (b + sub.b)/2 ); // set bead color left
 	};
 	if (x <= 8) {
-		PS.color( x + 1, y, r, g, b ); // set bead color right
-		PS.alpha( x + 1, y, 127 ); // set transparency
+		sub = PS.unmakeRGB( PS.color( x + 1, y ), {} );
+		PS.color( x + 1, y, (r + sub.r)/2, (g + sub.g)/2, (b + sub.b)/2 ); // set bead color right
 	};
 	if (y <= 8) {
-		PS.color( x, y + 1, r, g, b ); // set bead color bottom
-		PS.alpha( x, y + 1, 127 ); // set transparency
+		sub = PS.unmakeRGB( PS.color( x, y + 1 ), {} );
+		PS.color( x, y + 1, (r + sub.r)/2, (g + sub.g)/2, (b + sub.b)/2 ); // set bead color bottom
 	};
 	if (y >= 1) {
-		PS.color( x, y - 1, r, g, b ); // set bead color top
-		PS.alpha( x, y - 1, 127 ); // set transparency
+		sub = PS.unmakeRGB( PS.color( x, y - 1 ), {} );
+		PS.color( x, y - 1, (r + sub.r)/2, (g + sub.g)/2, (b + sub.b)/2 ); // set bead color top
 	};
 	
 	// Mod 5: Adding random letter on click
