@@ -55,7 +55,7 @@ PS.init = function( system, options ) {
 	PS.gridColor( 0x303030 ); // Perlenspiel gray
 
 	PS.statusColor( PS.COLOR_WHITE );
-	PS.statusText( "Touch any bead" );
+	PS.statusText( "Try randomly click something" );
 	
 	// Mod 4: Adding fading effect
 	// Set initial bead colors
