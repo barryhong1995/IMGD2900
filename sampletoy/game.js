@@ -97,15 +97,19 @@ PS.touch = function( x, y, data, options ) {
 	PS.color( x, y, r, g, b ); // set bead color center
 	if (x >= 1) {
 		PS.color( x - 1, y, r, g, b ); // set bead color left
+		PS.alpha( x - 1, y, 127 ); // set transparency
 	};
 	if (x <= 8) {
 		PS.color( x + 1, y, r, g, b ); // set bead color right
+		PS.alpha( x + 1, y, 127 ); // set transparency
 	};
 	if (y <= 8) {
 		PS.color( x, y + 1, r, g, b ); // set bead color bottom
+		PS.alpha( x, y + 1, 127 ); // set transparency
 	};
 	if (y >= 1) {
 		PS.color( x, y - 1, r, g, b ); // set bead color top
+		PS.alpha( x, y - 1, 127 ); // set transparency
 	};
 	
 	// Mod 5: Adding random letter on click
