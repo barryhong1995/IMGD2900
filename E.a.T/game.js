@@ -52,7 +52,7 @@ var pet;
 		grabX : [ 12, 18, 13, 14, 15, 16, 17, 13, 15, 17, 12, 13, 14, 15, 16, 17, 18, 12, 18 ], // x-position
 		grabY : [ 14, 14, 15, 15, 15, 15, 15, 16, 16, 16, 17, 17, 17, 17 ,17, 17, 17, 18, 18 ], // y-position
 		
-		grabColor : PS.COLOR_RED, // color
+		grabColor : PS.COLOR_GREEN, // color
 
 		// The following variables are all
 		// wall-related, so they start with 'wall'
@@ -62,44 +62,95 @@ var pet;
 		// move( x, y )
 		// Attempts to move grabber relative to
 		// current position
+		
+		foodColor : PS.COLOR_ORANGE,
 
 		move : function ( x, y ) {
 			var nx, ny, i;
 
 			// Calculate proposed new position
 			
-			for ( i = 0; i < 19; i+=1 ) {
-				nx = pet.grabX[i] + x;
-				ny = pet.grabY[i] + y;
+			// Going UP or LEFT
+			if (( x < 0 ) || ( y < 0 )) {
+				for ( i = 0; i < 19; i+=1 ) {
+					nx = pet.grabX[i] + x;
+					ny = pet.grabY[i] + y;
 
-				// Is new location off the grid?
-				// If so, return without moving
+					// Is new location off the grid?
+					// If so, return without moving
 
-				if ( ( nx < 0 ) || ( nx >= pet.width ) || ( ny < 0 ) || ( ny >= pet.height ) ) {
-					return;
-				}
+					if ( ( nx < 0 ) || ( nx >= pet.width ) || ( ny < 0 ) || ( ny >= pet.height ) ) {
+						return;
+					}
 
-				// Is there a wall in that location?
-				// If the bead there is black, it's a wall,
-				// so return without moving
+					// Is there a wall in that location?
+					// If the bead there is black, it's a wall,
+					// so return without moving
 
-				if ( PS.color( nx, ny ) === pet.wallColor ) {
-					return;
-				}
+					if ( PS.color( nx, ny ) === pet.wallColor ) {
+						return;
+					}
+					
+					// Encounter food bead
+					if ( PS.color( nx, ny ) === pet.foodColor ) {
+						PS.audioPlay ( "fx_scratch" );
+					}
 
-				// Legal move, so assign grabber's color
-				// to new location
+					// Legal move, so assign grabber's color
+					// to new location
 	
-				PS.color ( nx, ny, pet.grabColor );
+					PS.color ( nx, ny, pet.grabColor );
 
-				// Change current location to floor color
+					// Change current location to floor color
 
-				PS.color( pet.grabX[i], pet.grabY[i], PS.COLOR_WHITE );
+					PS.color( pet.grabX[i], pet.grabY[i], PS.COLOR_WHITE );
 
-				// Finally, update grabber's position vars
+					// Finally, update grabber's position vars
 
-				pet.grabX[i] = nx;
-				pet.grabY[i] = ny;
+					pet.grabX[i] = nx;
+					pet.grabY[i] = ny;
+				}
+			} 
+			// Going DOWN or RIGHT
+			else {
+				for ( i = 18; i >= 0; i-=1 ) {
+					nx = pet.grabX[i] + x;
+					ny = pet.grabY[i] + y;
+
+					// Is new location off the grid?
+					// If so, return without moving
+
+					if ( ( nx < 0 ) || ( nx >= pet.width ) || ( ny < 0 ) || ( ny >= pet.height ) ) {
+						return;
+					}
+
+					// Is there a wall in that location?
+					// If the bead there is black, it's a wall,
+					// so return without moving
+
+					if ( PS.color( nx, ny ) === pet.wallColor ) {
+						return;
+					}
+					
+					// Encounter food bead
+					if ( PS.color( nx, ny ) === pet.foodColor ) {
+						PS.audioPlay ( "fx_scratch" );
+					}
+
+					// Legal move, so assign grabber's color
+					// to new location
+	
+					PS.color ( nx, ny, pet.grabColor );
+
+					// Change current location to floor color
+
+					PS.color( pet.grabX[i], pet.grabY[i], PS.COLOR_WHITE );
+
+					// Finally, update grabber's position vars
+
+					pet.grabX[i] = nx;
+					pet.grabY[i] = ny;
+				}
 			}
 		}
 	};
@@ -114,7 +165,7 @@ PS.init = function( system, options ) {
 	PS.border( PS.ALL, PS.ALL, 0 ); // no borders
 	
 	PS.statusColor( PS.COLOR_WHITE );
-	PS.statusText( "Happiness: 8%" );
+	PS.statusText( "Happiness: 100%" );
 
 	// Enclose edges of grid with black walls
 
@@ -180,9 +231,21 @@ PS.touch = function( x, y, data, options ) {
 	// PS.debug( "PS.touch() @ " + x + ", " + y + "\n" );
 
 	// Add code here for mouse clicks/touches over a bead
-	PS.color ( x, y, PS.COLOR_ORANGE );
+	// Add food to white space
+	if ( PS.color( x, y ) === PS.COLOR_WHITE ) {
+		PS.color ( x, y, pet.foodColor );
+		PS.audioPlay( "fx_click" );
+	}
 	
-	PS.audioPlay( "fx_click" );
+	// Notification if add food to border
+	if ( PS.color( x, y ) === pet.wallColor ) {
+		PS.audioPlay( "fx_uhoh" );
+	}
+	
+	// Notification if add food on pet
+	if ( PS.color( x, y ) === pet.grabColor ) {
+		PS.audioPlay( "fx_squawk" );
+	}
 };
 
 // PS.release ( x, y, data, options )
