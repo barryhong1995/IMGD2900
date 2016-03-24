@@ -39,16 +39,20 @@ See dygraphs License.txt, <http://dygraphs.com> and <http://opensource.org/licen
 // [options] = an object with optional parameters; see documentation for details
 
 // Object: Alien Pet
+// Create a virtual pet along with information such as location, color, movement...
 var pet;
 
 ( function () {
 	pet = {
 		width : 31, // width of grid
 		height : 31, // height of grid
+		
+		maxHappiness : 100, // max happiness gauge
+		
+		touchTime : 0,
 
 		// The following variables are all
 		// grabber-related, so they start with 'grab'
-
 		grabX : [ 12, 18, 13, 14, 15, 16, 17, 13, 15, 17, 12, 13, 14, 15, 16, 17, 18, 12, 18 ], // x-position
 		grabY : [ 14, 14, 15, 15, 15, 15, 15, 16, 16, 16, 17, 17, 17, 17 ,17, 17, 17, 18, 18 ], // y-position
 		
@@ -56,20 +60,17 @@ var pet;
 
 		// The following variables are all
 		// wall-related, so they start with 'wall'
-
 		wallColor : PS.COLOR_BLACK,
 
 		// move( x, y )
 		// Attempts to move grabber relative to
 		// current position
-		
 		foodColor : PS.COLOR_ORANGE,
 
 		move : function ( x, y ) {
 			var nx, ny, i;
 
 			// Calculate proposed new position
-			
 			// Going UP or LEFT
 			if (( x < 0 ) || ( y < 0 )) {
 				for ( i = 0; i < 19; i+=1 ) {
@@ -78,7 +79,6 @@ var pet;
 
 					// Is new location off the grid?
 					// If so, return without moving
-
 					if ( ( nx < 0 ) || ( nx >= pet.width ) || ( ny < 0 ) || ( ny >= pet.height ) ) {
 						return;
 					}
@@ -86,7 +86,6 @@ var pet;
 					// Is there a wall in that location?
 					// If the bead there is black, it's a wall,
 					// so return without moving
-
 					if ( PS.color( nx, ny ) === pet.wallColor ) {
 						return;
 					}
@@ -94,19 +93,17 @@ var pet;
 					// Encounter food bead
 					if ( PS.color( nx, ny ) === pet.foodColor ) {
 						PS.audioPlay ( "fx_scratch" );
+						hp.restart(5);
 					}
 
 					// Legal move, so assign grabber's color
 					// to new location
-	
 					PS.color ( nx, ny, pet.grabColor );
 
 					// Change current location to floor color
-
 					PS.color( pet.grabX[i], pet.grabY[i], PS.COLOR_WHITE );
 
 					// Finally, update grabber's position vars
-
 					pet.grabX[i] = nx;
 					pet.grabY[i] = ny;
 				}
@@ -119,7 +116,6 @@ var pet;
 
 					// Is new location off the grid?
 					// If so, return without moving
-
 					if ( ( nx < 0 ) || ( nx >= pet.width ) || ( ny < 0 ) || ( ny >= pet.height ) ) {
 						return;
 					}
@@ -127,7 +123,6 @@ var pet;
 					// Is there a wall in that location?
 					// If the bead there is black, it's a wall,
 					// so return without moving
-
 					if ( PS.color( nx, ny ) === pet.wallColor ) {
 						return;
 					}
@@ -135,19 +130,17 @@ var pet;
 					// Encounter food bead
 					if ( PS.color( nx, ny ) === pet.foodColor ) {
 						PS.audioPlay ( "fx_scratch" );
+						hp.restart(5);
 					}
 
 					// Legal move, so assign grabber's color
 					// to new location
-	
 					PS.color ( nx, ny, pet.grabColor );
 
 					// Change current location to floor color
-
 					PS.color( pet.grabX[i], pet.grabY[i], PS.COLOR_WHITE );
 
 					// Finally, update grabber's position vars
-
 					pet.grabX[i] = nx;
 					pet.grabY[i] = ny;
 				}
@@ -156,19 +149,88 @@ var pet;
 	};
 }() );
 
+
+// Object: Happiness Gauge
+// Making a happiness gauge that start at 100% and reduce to 0%.
+// Different action can increase the happiness gauge.
+var hp;
+
+( function () {
+	"use strict";
+
+	// Private variables
+	var timer = null; // timer id, null if none
+	var count = 0; // countdown value
+	var current = 0;
+	var moveX, moveY;
+
+	// Private timer function, called every second
+	var tick = function () {
+		count -= 1;
+		if ( count < 1 ) { // reached zero?
+			PS.timerStop( timer );
+			timer = null; // allows restart
+			PS.audioPlay( "fx_wilhelm" );
+			PS.statusText( "Alien Pet is dead" );
+		}
+		else {
+			// Show Happiness status
+			PS.statusText( "Happiness: "+ count.toString() + "%" );
+			PS.audioPlay( "fx_click" );
+			moveX = 0;
+			moveY = 0;
+			while (( moveX==moveY ) || ( moveX + moveY == 0 )) {
+				moveX = PS.random(3) - 2;
+				moveY = PS.random(3) - 2;
+			}
+			pet.move( moveX, moveY );
+			current = count;
+		}
+		
+		if ((count < 100) && (count > 65)) {
+			pet.grabColor = PS.COLOR_GREEN;
+		} else if ((count < 66) && (count > 33)) {
+			pet.grabColor = PS.COLOR_YELLOW;
+		} else if (count < 34) {
+			pet.grabColor = PS.COLOR_RED;
+		}
+	};
+
+	// Initialize happiness gauge
+	hp = {
+		// Start the timer if not already running
+		start : function () {
+			if ( !timer ) { // null if not running
+				count = pet.maxHappiness; // reset count
+				timer = PS.timerStart( 60, tick );
+				// PS.statusText( "Alien Pet is happy" );
+			} 
+		},
+		
+		restart : function ( x ) {
+			PS.timerStop( timer );
+			count = current + x; // reset count
+			if (count > 100) {
+				count = 100;
+			}
+			timer = PS.timerStart( 60, tick );
+		}
+	}
+}() )
+
 PS.init = function( system, options ) {
 	var i;
 	"use strict";
 
+	// Interface for pet zone
 	PS.gridSize( pet.width, pet.height ); // init grid
 	PS.gridColor( 0x303030 ); // Perlenspiel gray
 	PS.border( PS.ALL, PS.ALL, 0 ); // no borders
 	
 	PS.statusColor( PS.COLOR_WHITE );
-	PS.statusText( "Happiness: 100%" );
+	PS.statusText( "Alien Pet is hungry!" );
 
 	// Enclose edges of grid with black walls
-
 	PS.color( PS.ALL, 0, pet.wallColor ); // top
 	PS.color( PS.ALL, pet.height - 1, pet.wallColor ); // bottom
 	PS.color( 0, PS.ALL, pet.wallColor ); // left
@@ -178,6 +240,12 @@ PS.init = function( system, options ) {
 	for ( i = 0; i < 19; i+=1 ) {
 		PS.color( pet.grabX[i], pet.grabY[i], pet.grabColor );
 	}
+
+	// Preload required sounds
+
+	PS.audioLoad( "fx_ding" );
+	PS.audioLoad( "fx_click" );
+	PS.audioLoad( "fx_bang" );
 };
 
 // Moving the grabber
@@ -242,10 +310,20 @@ PS.touch = function( x, y, data, options ) {
 		PS.audioPlay( "fx_uhoh" );
 	}
 	
-	// Notification if add food on pet
+	// Notification if provoking pet
 	if ( PS.color( x, y ) === pet.grabColor ) {
-		PS.audioPlay( "fx_squawk" );
+		if (pet.touchTime < 4) {
+			PS.audioPlay( "fx_squawk" );
+			pet.touchTime += 1;
+			hp.restart(2);
+		} else {
+			PS.audioPlay( "fx_wilhelm" );
+			hp.restart(-15);
+			pet.touchTime = 0;
+		}
 	}
+	
+	hp.start();
 };
 
 // PS.release ( x, y, data, options )
