@@ -49,7 +49,7 @@ var pet;
 		
 		maxHappiness : 100, // max happiness gauge
 		
-		touchTime : 0,
+		touchTime : 0, // count times of provoking
 
 		// The following variables are all
 		// grabber-related, so they start with 'grab'
@@ -60,12 +60,20 @@ var pet;
 
 		// The following variables are all
 		// wall-related, so they start with 'wall'
-		wallColor : PS.COLOR_BLACK,
+		wallColor : 0x3E679C,
+		
+		// Poops color
+		poopColor : 0x7F0000,
+		
+		// Death color
+		deathColor : 0x51120C,
+		
+		// Food color
+		foodColor : 0xFF7242,
 
 		// move( x, y )
 		// Attempts to move grabber relative to
 		// current position
-		foodColor : PS.COLOR_ORANGE,
 
 		move : function ( x, y ) {
 			var nx, ny, i;
@@ -94,6 +102,12 @@ var pet;
 					if ( PS.color( nx, ny ) === pet.foodColor ) {
 						PS.audioPlay ( "fx_scratch" );
 						hp.restart(5);
+					}
+					
+					// Encounter own poops
+					if ( PS.color( nx, ny ) === pet.poopColor ) {
+						PS.audioPlay ( "fx_wilhelm" );
+						hp.restart(-7);
 					}
 
 					// Legal move, so assign grabber's color
@@ -132,6 +146,12 @@ var pet;
 						PS.audioPlay ( "fx_scratch" );
 						hp.restart(5);
 					}
+					
+					// Encounter own poops
+					if ( PS.color( nx, ny ) === pet.poopColor ) {
+						PS.audioPlay ( "fx_wilhelm" );
+						hp.restart(-7);
+					}
 
 					// Legal move, so assign grabber's color
 					// to new location
@@ -163,6 +183,7 @@ var hp;
 	var count = 0; // countdown value
 	var current = 0;
 	var moveX, moveY;
+	var isDead = 0;
 
 	// Private timer function, called every second
 	var tick = function () {
@@ -172,6 +193,7 @@ var hp;
 			timer = null; // allows restart
 			PS.audioPlay( "fx_wilhelm" );
 			PS.statusText( "Alien Pet is dead" );
+			isDead = 1;
 		}
 		else {
 			// Show Happiness status
@@ -187,17 +209,39 @@ var hp;
 			current = count;
 		}
 		
-		if ((count < 100) && (count > 65)) {
-			pet.grabColor = PS.COLOR_GREEN;
-		} else if ((count < 66) && (count > 33)) {
-			pet.grabColor = PS.COLOR_YELLOW;
-		} else if (count < 34) {
+		// Changing color according to % of happiness
+		if ((count < 100) && (count >= 90)) {
+		 	pet.grabColor = PS.COLOR_GREEN;
+		} else if ((count < 90) && (count >= 80)) {
+			pet.grabColor = 0x3FFF00;
+		} else if ((count < 80) && (count >= 70)) {
+			pet.grabColor = 0x7FFF00;
+		} else if ((count < 70) && (count >= 60)) {
+			pet.grabColor = 0xBFFF00;
+		} else if ((count < 60) && (count >= 50)) {
+			pet.grabColor = PS.COLOR_YELLOW
+		} else if ((count < 50) && (count >= 40)) {
+			pet.grabColor = 0xFFBF00;
+		} else if ((count < 40) && (count >= 30)) {
+			pet.grabColor = 0xFF7F00;
+		} else if ((count < 30) && (count >= 20)) {
+			pet.grabColor = 0xFF3F00;
+		} else if ((count < 20) && (count >= 3)) {
 			pet.grabColor = PS.COLOR_RED;
+		} else if (count < 3) {
+			pet.grabColor = pet.deathColor;
+		}
+		
+		// Random poops generator
+		if ((count % 10) == 0) {
+			PS.color( PS.random(28) + 1, PS.random(28) + 1, pet.poopColor );
 		}
 	};
 
 	// Initialize happiness gauge
 	hp = {
+		deathCheck : isDead,
+		
 		// Start the timer if not already running
 		start : function () {
 			if ( !timer ) { // null if not running
@@ -207,13 +251,16 @@ var hp;
 			} 
 		},
 		
+		// Restart the timer for several actions
 		restart : function ( x ) {
-			PS.timerStop( timer );
-			count = current + x; // reset count
-			if (count > 100) {
-				count = 100;
+			if ( timer ) {
+				PS.timerStop( timer );
+				count = current + x; // reset count
+				if (count > 100) {
+					count = 100;
+				}
+				timer = PS.timerStart( 60, tick );
 			}
-			timer = PS.timerStart( 60, tick );
 		}
 	}
 }() )
@@ -221,6 +268,9 @@ var hp;
 PS.init = function( system, options ) {
 	var i;
 	"use strict";
+	
+	// Enable 3-second fader on all beads
+	PS.fade( PS.ALL, PS.ALL, 180 );
 
 	// Interface for pet zone
 	PS.gridSize( pet.width, pet.height ); // init grid
@@ -246,6 +296,8 @@ PS.init = function( system, options ) {
 	PS.audioLoad( "fx_ding" );
 	PS.audioLoad( "fx_click" );
 	PS.audioLoad( "fx_bang" );
+	
+	hp.start();
 };
 
 // Moving the grabber
@@ -323,7 +375,10 @@ PS.touch = function( x, y, data, options ) {
 		}
 	}
 	
-	hp.start();
+	// Cleaning poops
+	if ( PS.color( x, y) === pet.poopColor ) {
+		PS.color( x, y, PS.COLOR_WHITE );
+	}
 };
 
 // PS.release ( x, y, data, options )
