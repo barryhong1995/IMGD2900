@@ -377,6 +377,7 @@ PS.touch = function( x, y, data, options ) {
 	
 	// Cleaning poops
 	if ( PS.color( x, y) === pet.poopColor ) {
+		PS.audioPlay( "fx_swoosh" );
 		PS.color( x, y, PS.COLOR_WHITE );
 	}
 };
