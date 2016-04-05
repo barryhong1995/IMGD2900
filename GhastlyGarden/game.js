@@ -38,6 +38,8 @@ var garden, character;
 		width : [10], // width of garden for individual levels
 		height : [10], // height of garden for individual levels
 		
+		maxLevel : 1, // number of levels available for the game
+		
 		wallColor : 0x778779, // color for wall of garden
 		floorColor : 0x3D3D3D, // color for floor of garden
 		ghostColor : 0xCFCCCB, // color for ghost
@@ -45,8 +47,10 @@ var garden, character;
 		
 		// The following variables are for location of
 		// walls and floors according to each level.
-		levelWallX : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 3, 0, 2, 3, 5, 7, 9, 0, 2, 5, 7, 8, 9, 0, 2, 5, 9, 0, 2, 4, 5, 6, 7, 9, 0, 4, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-		levelWallY : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+		levelWallX : 
+			[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 3, 0, 2, 3, 5, 7, 9, 0, 2, 5, 7, 8, 9, 0, 2, 5, 9, 0, 2, 4, 5, 6, 7, 9, 0, 4, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]],
+		levelWallY : 
+			[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]],
 		
 		// The following variables are for location of
 		// players according to each level
@@ -56,7 +60,34 @@ var garden, character;
 		// The following variables are for location of
 		// ghost according to each level
 		levelGhostX : [8],
-		levelGhostY : [2]
+		levelGhostY : [2],
+		
+		// setup(level)
+		// Attempt to set up garden relative to level	
+		setup: function (level) {
+			var i;
+			
+			// Set up dimesion of level
+			PS.gridSize( garden.width[level], garden.height[level] );
+			PS.gridColor( 0x303030 ); // Perlenspiel gray
+			PS.color( PS.ALL, PS.ALL, garden.floorColor );
+			PS.border( PS.ALL, PS.ALL, 0 );
+			
+			// Indicate Level
+			PS.statusColor(PS.COLOR_WHITE);
+			PS.statusText("Level: " + (level+1).toString());
+					
+			// Set up walls
+			for (i = 0; i < garden.levelWallX[level].length; i++){
+				PS.color(garden.levelWallX[level][i], garden.levelWallY[level][i], garden.wallColor);
+			};
+	
+			// Place player at initial position
+			PS.color(garden.levelPlayerX[level], garden.levelPlayerY[level], garden.playerColor);
+	
+			// Place ghost at initial position
+			PS.color(garden.levelGhostX[level], garden.levelGhostY[level], garden.ghostColor);
+		}
 	};
 	
 	// The following variable are for actions of characters, player and ghost
@@ -176,27 +207,12 @@ var garden, character;
 PS.init = function( system, options ) {
 	"use strict";
 
-	var i;
+	// Indicate initial level
+	var currentLevel;
+	currentLevel = 0;
+	
 	// Garden setup
-	PS.gridSize( garden.width[0], garden.height[0] );
-	PS.gridColor( 0x303030 ); // Perlenspiel gray
-	PS.color( PS.ALL, PS.ALL, garden.floorColor );
-	PS.border( PS.ALL, PS.ALL, 0 );
-	
-	PS.statusColor(PS.COLOR_WHITE);
-	PS.statusText("Level: 1");
-	
-	// Set up walls
-	for (i = 0; i<= 58; i++){
-		PS.color(garden.levelWallX[i], garden.levelWallY[i], garden.wallColor);
-	};
-	
-	// Place player at initial position
-	PS.color(garden.levelPlayerX[0], garden.levelPlayerY[0], garden.playerColor);
-	
-	// Place ghost at initial position
-	PS.color(garden.levelGhostX[0], garden.levelGhostY[0], garden.ghostColor);
-
+	garden.setup(currentLevel);
 };
 
 // PS.touch ( x, y, data, options )
