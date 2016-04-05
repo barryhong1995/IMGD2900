@@ -179,9 +179,12 @@ PS.init = function( system, options ) {
 	var i;
 	// Garden setup
 	PS.gridSize( garden.width[0], garden.height[0] );
+	PS.gridColor( 0x303030 ); // Perlenspiel gray
 	PS.color( PS.ALL, PS.ALL, garden.floorColor );
 	PS.border( PS.ALL, PS.ALL, 0 );
-	PS.statusText("Level: 1")
+	
+	PS.statusColor(PS.COLOR_WHITE);
+	PS.statusText("Level: 1");
 	
 	// Set up walls
 	for (i = 0; i<= 58; i++){
