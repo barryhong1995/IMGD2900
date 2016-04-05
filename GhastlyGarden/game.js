@@ -181,6 +181,7 @@ PS.init = function( system, options ) {
 	PS.gridSize( garden.width[0], garden.height[0] );
 	PS.color( PS.ALL, PS.ALL, garden.floorColor );
 	PS.border( PS.ALL, PS.ALL, 0 );
+	PS.statusText("Level: 1")
 	
 	// Set up walls
 	for (i = 0; i<= 58; i++){
