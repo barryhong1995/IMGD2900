@@ -35,40 +35,144 @@ var garden, character;
 ( function () {
 	// The following variables are for setting of the garden
 	garden = {
-		width : [10, 10], // width of garden for individual levels
-		height : [10, 10], // height of garden for individual levels
+		width : [3, 10, 10, 7, 17, 11], // width of garden for individual levels
+		height : [9, 10, 10, 12, 14, 12], // height of garden for individual levels
 		
 		currentLevel : 0, // current level
-		maxLevel : 1, // number of levels available for the game
+		maxLevel : 5, // number of levels available for the game
 		
 		wallColor : 0x778779, // color for wall of garden
 		floorColor : 0x3D3D3D, // color for floor of garden
 		ghostColor : 0xCFCCCB, // color for ghost
 		playerColor : 0xAB5341, // color for player
 		
+		escapeStatus : 0, // check escape status of player
+		
 		// The following variables are for location of
 		// walls and floors according to each level.
-		levelWallX : 
-			[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 3, 0, 2, 3, 5, 7, 9, 0, 2, 5, 7, 8, 9, 0, 2, 5, 9, 0, 2, 4, 5, 6, 7, 9, 0, 4, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-			 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 9, 0, 4, 5, 9, 0, 2, 5, 9, 0, 2, 7, 9, 0, 7, 0, 2, 3, 7, 9, 0, 3, 9, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]],
-		levelWallY : 
-			[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-			 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]],
+		floorPlane : 0,
+		wallPlane : 1,
+		map : [[1, 0, 1,
+			    1, 0, 1,
+				1, 0, 1,
+				1, 0, 1,
+				1, 0, 1,
+				1, 0, 1,
+				1, 0, 1,
+				1, 0, 1,
+				1, 1, 1,],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0 ,0, 1, 1, 0, 0, 0, 1,
+				1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
+				1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+				1, 0, 1, 1, 0, 0, 0, 1, 0, 1,
+				1, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+				1, 0, 1, 1, 0, 1, 0, 1, 0, 1,
+				1, 0, 1, 0, 0, 1, 0, 1, 1, 1,
+				1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+				1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+			   [1, 1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 1, 0, 1,
+				0, 0, 0, 0 ,1, 0, 1,
+				1, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 1,
+				1, 0, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 1,
+				1, 0, 0, 0, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1],
+
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+				1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1,
+				1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1,
+				1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+				1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+				1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+				1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+				1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1,
+				1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+				1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+				1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+				1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0,
+				1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
 		
 		// The following variables are for location of
 		// players according to each level
-		levelPlayerX : [4, 1],
-		levelPlayerY : [4, 4],
+		levelPlayerX : [1, 1, 4, 3, 3, 2],
+		levelPlayerY : [2, 4, 4, 7, 5, 1],
+		initLevelPlayerX : [1, 1, 4, 3, 3, 2],
+		initLevelPlayerY : [2, 4, 4, 7, 5, 1],
 		
 		// The following variables are for location of
 		// ghost according to each level
-		levelGhostX : [8, 4],
-		levelGhostY : [2, 8],
+		levelGhostX : [1, 3, 8, 3, 13, 9],
+		levelGhostY : [5, 8, 2, 3, 1, 10],
+		initLevelGhostX : [1, 3, 8, 3, 13, 9],
+		initLevelGhostY : [5, 8, 2, 3, 1, 10],
+		
+		// drawMaze(level)
+		// Scan the map data and draw out layout of the maze
+		drawMaze : function (level) {
+			var ptr, x, y, data;
+			
+			ptr = 0; // Initial data pointer
+			for (y = 0; y < garden.height[level]; y++){
+				for (x = 0; x < garden.width[level]; x++) {
+					data = garden.map[level] [ptr]; // Get map data
+					if (data == 1) { // Wall?
+						PS.gridPlane(garden.floorPlane);
+						PS.color(x, y, garden.wallColor);
+					} else if (data == 0) { // Floor?
+						PS.gridPlane(garden.floorPlane);
+						PS.color(x, y, garden.floorColor);
+					};
+					ptr ++; // Update pointer
+				}
+			}
+		},
 		
 		// setup(level)
 		// Attempt to set up garden relative to level	
-		setup: function (level) {
-			var i;
+		setup: function (level, reset) {
+			// Refresh level
+			if (reset == 1){
+				garden.levelPlayerX[level] = garden.initLevelPlayerX[level];
+				garden.levelPlayerY[level] = garden.initLevelPlayerY[level];
+				garden.levelGhostX[level] = garden.initLevelGhostX[level];
+				garden.levelGhostY[level] = garden.initLevelGhostY[level];
+			}
+			
+			// Reset escape status
+			garden.escapeStatus = 0;
 			
 			// Set up dimesion of level
 			PS.gridSize( garden.width[level], garden.height[level] );
@@ -81,17 +185,15 @@ var garden, character;
 			PS.statusText("Level: " + (level+1).toString());
 					
 			// Set up walls
-			for (i = 0; i < garden.levelWallX[level].length; i++){
-				PS.color(garden.levelWallX[level][i], garden.levelWallY[level][i], garden.wallColor);
-			};
+			garden.drawMaze(level);
 	
 			// Place player at initial position
-			PS.color(garden.levelPlayerX[level], garden.levelPlayerY[level], garden.playerColor);
-			PS.radius(garden.levelPlayerX[level], garden.levelPlayerY[level], 50)
+			PS.color(garden.initLevelPlayerX[level], garden.initLevelPlayerY[level], garden.playerColor);
+			PS.radius(garden.initLevelPlayerX[level], garden.initLevelPlayerY[level], 50)
 	
 			// Place ghost at initial position
-			PS.color(garden.levelGhostX[level], garden.levelGhostY[level], garden.ghostColor);
-			PS.radius(garden.levelGhostX[level], garden.levelGhostY[level], 50);
+			PS.color(garden.initLevelGhostX[level], garden.initLevelGhostY[level], garden.ghostColor);
+			PS.radius(garden.initLevelGhostX[level], garden.initLevelGhostY[level], 50);
 			
 			// Save level
 			garden.currentLevel = level;
@@ -129,12 +231,14 @@ var garden, character;
 			garden.levelPlayerY[garden.currentLevel] = ny;
 			
 			// Check whether the player escapes
-			if ((nx == garden.width[garden.currentLevel] - 1) || (ny == garden.height[garden.currentLevel] - 1)) {
+			if ((nx == garden.width[garden.currentLevel] - 1) || (ny == garden.height[garden.currentLevel] - 1) || (nx == 0) || (ny == 0)) {
 				if (garden.currentLevel == garden.maxLevel){
-					PS.statusText("You win!");
+					PS.statusText("You win! You finally escape the maze!");
+					garden.escapeStatus = 1;
 				} else {
 					garden.currentLevel++;
-					garden.setup(garden.currentLevel);
+					PS.statusText("You win! Press SPACE to continue");
+					garden.escapeStatus = 1;
 				}
 			}
 		},
@@ -333,8 +437,10 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 87: // upper-case W
 		{
 			character.move( 0, -1 );
+			if (garden.escapeStatus == 0) {
 			character.ghostWalk( 0, -1 );
 			character.ghostWalk( 0, -1 );
+			};
 			break;
 		}
 		case PS.KEY_ARROW_DOWN:
@@ -342,8 +448,10 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 83: // upper-case S
 		{
 			character.move( 0, 1 );
+			if (garden.escapeStatus == 0) {
 			character.ghostWalk( 0, 1 );
 			character.ghostWalk( 0, 1 );
+			};
 			break;
 		}
 		case PS.KEY_ARROW_LEFT:
@@ -351,8 +459,10 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 65: // upper-case A
 		{
 			character.move( -1, 0 );
+			if (garden.escapeStatus == 0) {
 			character.ghostWalk( -1, 0 );
 			character.ghostWalk( -1, 0 );
+			};
 			break;
 		}
 		case PS.KEY_ARROW_RIGHT:
@@ -360,8 +470,15 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 68: // upper-case D
 		{
 			character.move( 1, 0 );
+			if (garden.escapeStatus == 0) {
 			character.ghostWalk( 1, 0 );
 			character.ghostWalk( 1, 0 );
+			};
+			break;
+		}
+		case 32:
+		{
+			garden.setup(garden.currentLevel, 1);
 			break;
 		}
 	}
