@@ -35,11 +35,11 @@ var garden, character;
 ( function () {
 	// The following variables are for setting of the garden
 	garden = {
-		width : [3, 10, 10, 7, 17, 11], // width of garden for individual levels
-		height : [9, 10, 10, 12, 14, 12], // height of garden for individual levels
+		width : [3, 10, 10, 7, 17, 11, 12], // width of garden for individual levels
+		height : [9, 10, 10, 12, 14, 12, 14], // height of garden for individual levels
 		
 		currentLevel : 0, // current level
-		maxLevel : 5, // number of levels available for the game
+		maxLevel : 6, // number of levels available for the game
 		
 		wallColor : 0x778779, // color for wall of garden
 		floorColor : 0x3D3D3D, // color for floor of garden
@@ -123,21 +123,45 @@ var garden, character;
 				1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
 				1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0,
 				1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+			   
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+			    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1,
+				1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1,
+				1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1,
+				1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1,
+				1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
 		
 		// The following variables are for location of
 		// players according to each level
-		levelPlayerX : [1, 1, 4, 3, 3, 2],
-		levelPlayerY : [2, 4, 4, 7, 5, 1],
-		initLevelPlayerX : [1, 1, 4, 3, 3, 2],
-		initLevelPlayerY : [2, 4, 4, 7, 5, 1],
+		levelPlayerX : [1, 1, 4, 3, 3, 2, 5],
+		levelPlayerY : [2, 4, 4, 7, 5, 1, 4],
+		initLevelPlayerX : [1, 1, 4, 3, 3, 2, 5],
+		initLevelPlayerY : [2, 4, 4, 7, 5, 1, 4],
 		
 		// The following variables are for location of
 		// ghost according to each level
-		levelGhostX : [1, 3, 8, 3, 13, 9],
-		levelGhostY : [5, 8, 2, 3, 1, 10],
-		initLevelGhostX : [1, 3, 8, 3, 13, 9],
-		initLevelGhostY : [5, 8, 2, 3, 1, 10],
+		levelGhostX : [1, 3, 8, 3, 13, 9, 6],
+		levelGhostY : [5, 8, 2, 3, 1, 10, 2],
+		initLevelGhostX : [1, 3, 8, 3, 13, 9, 6],
+		initLevelGhostY : [5, 8, 2, 3, 1, 10, 2],
+		
+		// The following variables are for 2nd ghosts,
+		// checking whether there is a 2nd ghosts as well as
+		// its location
+		level2ndGhostEnabled : [0, 0, 0, 0, 0, 0, 1],
+		level2ndGhostX : [0, 0, 0, 0, 0, 0, 9],
+		level2ndGhostY : [0, 0, 0, 0, 0, 0, 11],
+		initLevel2ndGhostX : [0, 0, 0, 0, 0, 0, 9],
+		initLevel2ndGhostY : [0, 0, 0, 0, 0, 0, 11],
 		
 		// drawMaze(level)
 		// Scan the map data and draw out layout of the maze
@@ -169,6 +193,8 @@ var garden, character;
 				garden.levelPlayerY[level] = garden.initLevelPlayerY[level];
 				garden.levelGhostX[level] = garden.initLevelGhostX[level];
 				garden.levelGhostY[level] = garden.initLevelGhostY[level];
+				garden.level2ndGhostX[level] = garden.initLevel2ndGhostX[level];
+				garden.level2ndGhostY[level] = garden.initLevel2ndGhostY[level];
 			}
 			
 			// Reset escape status
@@ -194,6 +220,12 @@ var garden, character;
 			// Place ghost at initial position
 			PS.color(garden.initLevelGhostX[level], garden.initLevelGhostY[level], garden.ghostColor);
 			PS.radius(garden.initLevelGhostX[level], garden.initLevelGhostY[level], 50);
+			
+			// Place 2nd ghost at initial position
+			if (garden.level2ndGhostEnabled[level] == 1){ // Check whether level has 2nd ghost
+				PS.color(garden.initLevel2ndGhostX[level], garden.initLevel2ndGhostY[level], garden.ghostColor);
+				PS.radius(garden.initLevel2ndGhostX[level], garden.initLevel2ndGhostY[level], 50);
+			};
 			
 			// Save level
 			garden.currentLevel = level;
@@ -236,13 +268,14 @@ var garden, character;
 					PS.statusText("You win! You finally escape the maze!");
 					garden.escapeStatus = 1;
 				} else {
-					garden.currentLevel++;
 					PS.statusText("You win! Press SPACE to continue");
 					garden.escapeStatus = 1;
 				}
 			}
 		},
 		
+		// ghostWalk(x,y)
+		// Relating to 1st ghost
 		ghostWalk : function (x, y) {
 			var nx, ny, dirX, dirY, count;
 			
@@ -312,6 +345,79 @@ var garden, character;
 			// Update location
 			garden.levelGhostX[garden.currentLevel] = nx;
 			garden.levelGhostY[garden.currentLevel] = ny;
+		},
+		
+		// ghostWalk2nd (x, y)
+		// Relating to movement of 2nd ghost
+		ghostWalk2nd : function (x, y) {
+			var nx, ny, dirX, dirY, count;
+			
+			// Initialize proposed direction for ghost
+			dirX = 0;
+			dirY = 0;
+			
+			// Compare with the location of player
+			
+			// x-axis related
+			if (garden.levelPlayerX[garden.currentLevel] < garden.level2ndGhostX[garden.currentLevel]){         // If player is on the left of the ghost
+				dirX = -1;
+			} else if (garden.levelPlayerX[garden.currentLevel] > garden.level2ndGhostX[garden.currentLevel]) { // If player is on the right of the ghost
+				dirX = 1;
+			};
+				
+			// y-axis related
+			if (garden.levelPlayerY[garden.currentLevel] < garden.level2ndGhostY[garden.currentLevel]){         // If player is above the ghost
+				dirY = -1;
+			} else if (garden.levelPlayerY[garden.currentLevel] > garden.level2ndGhostY[garden.currentLevel]) { // If player is below the ghost
+				dirY = 1;
+			};
+			
+			// Set initial location for ghost
+			nx = garden.level2ndGhostX[garden.currentLevel];
+			ny = garden.level2ndGhostY[garden.currentLevel];
+			
+			// Find direction to turn for ghost
+			if (!(x==0)) {         // If the player goes along x-axis
+				if (PS.color(nx + dirX, ny) == garden.floorColor){
+					nx = garden.level2ndGhostX[garden.currentLevel] + dirX;
+				} else if (PS.color(nx, ny + dirY) == garden.floorColor){
+					ny = garden.level2ndGhostY[garden.currentLevel] + dirY;
+				} else if ((PS.color(nx + dirX, ny) == garden.playerColor) || (PS.color(nx, ny + dirY) == garden.playerColor)){ // If player is in sight
+					nx = garden.levelPlayerX[garden.currentLevel];
+					ny = garden.levelPlayerY[garden.currentLevel];
+					PS.statusText("You die!");
+				};
+			} else if (!(y==0)) {  // If the player goes along y-axis
+				if (PS.color(nx, ny + dirY) == garden.floorColor){
+					ny = garden.level2ndGhostY[garden.currentLevel] + dirY;
+				} else if (PS.color(nx + dirX, ny) == garden.floorColor){
+					nx = garden.level2ndGhostX[garden.currentLevel] + dirX;
+				} else if ((PS.color(nx + dirX, ny) == garden.playerColor) || (PS.color(nx, ny + dirY) == garden.playerColor)){ // If player is in sight
+					nx = garden.levelPlayerX[garden.currentLevel];
+					ny = garden.levelPlayerY[garden.currentLevel];
+					PS.statusText("You die!");
+				};
+			};
+			
+			// Restrain ghost from going off the grid
+			if ((nx < 0) || (nx >= garden.width[garden.currentLevel]) || (ny < 0) || (ny >= garden.height[garden.currentLevel])) {
+				return;
+			};
+			
+			// Restrain ghost from moving over wall
+			if (PS.color(nx, ny) == garden.wallColor) {
+				return;
+			};
+
+			// Legal move, proceed to new location
+			PS.color(garden.level2ndGhostX[garden.currentLevel], garden.level2ndGhostY[garden.currentLevel], garden.floorColor);
+			PS.radius(garden.level2ndGhostX[garden.currentLevel], garden.level2ndGhostY[garden.currentLevel], 0);
+			PS.color(nx, ny, garden.ghostColor);
+			PS.radius(nx, ny, 50);
+			
+			// Update location
+			garden.level2ndGhostX[garden.currentLevel] = nx;
+			garden.level2ndGhostY[garden.currentLevel] = ny;
 		}
 	}
 }() );
@@ -436,50 +542,79 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 119: // lower-case w
 		case 87: // upper-case W
 		{
-			character.move( 0, -1 );
-			if (garden.escapeStatus == 0) {
-			character.ghostWalk( 0, -1 );
-			character.ghostWalk( 0, -1 );
-			};
+			if (garden.escapeStatus == 0){
+				character.move( 0, -1 );
+				if (garden.escapeStatus == 0) {
+					character.ghostWalk( 0, -1 );
+					character.ghostWalk( 0, -1 );
+					if (garden.level2ndGhostEnabled[garden.currentLevel] == 1) {
+						character.ghostWalk2nd( 0, -1 );
+						character.ghostWalk2nd( 0, -1 );
+					};
+				};
 			break;
+			};
 		}
 		case PS.KEY_ARROW_DOWN:
 		case 115: // lower-case s
 		case 83: // upper-case S
 		{
-			character.move( 0, 1 );
-			if (garden.escapeStatus == 0) {
-			character.ghostWalk( 0, 1 );
-			character.ghostWalk( 0, 1 );
+			if (garden.escapeStatus == 0){
+				character.move( 0, 1 );
+				if (garden.escapeStatus == 0) {
+					character.ghostWalk( 0, 1 );
+					character.ghostWalk( 0, 1 );
+					if (garden.level2ndGhostEnabled[garden.currentLevel] == 1) {
+						character.ghostWalk2nd( 0, 1 );
+						character.ghostWalk2nd( 0, 1 );
+					};
+				};
+				break;
 			};
-			break;
 		}
 		case PS.KEY_ARROW_LEFT:
 		case 97: // lower-case a
 		case 65: // upper-case A
 		{
-			character.move( -1, 0 );
-			if (garden.escapeStatus == 0) {
-			character.ghostWalk( -1, 0 );
-			character.ghostWalk( -1, 0 );
+			if (garden.escapeStatus == 0){
+				character.move( -1, 0 );
+				if (garden.escapeStatus == 0) {
+					character.ghostWalk( -1, 0 );
+					character.ghostWalk( -1, 0 );
+					if (garden.level2ndGhostEnabled[garden.currentLevel] == 1) {
+						character.ghostWalk2nd( -1, 0 );
+						character.ghostWalk2nd( -1, 0 );
+					};
+				};
+				break;
 			};
-			break;
 		}
 		case PS.KEY_ARROW_RIGHT:
 		case 100: // lower-case d
 		case 68: // upper-case D
 		{
-			character.move( 1, 0 );
-			if (garden.escapeStatus == 0) {
-			character.ghostWalk( 1, 0 );
-			character.ghostWalk( 1, 0 );
+			if (garden.escapeStatus == 0){
+				character.move( 1, 0 );
+				if (garden.escapeStatus == 0) {
+					character.ghostWalk( 1, 0 );
+					character.ghostWalk( 1, 0 );
+					if (garden.level2ndGhostEnabled[garden.currentLevel] == 1) {
+						character.ghostWalk2nd( 1, 0 );
+						character.ghostWalk2nd( 1, 0 );
+					};
+				};
+				break;
 			};
-			break;
 		}
 		case 32:
 		{
-			garden.setup(garden.currentLevel, 1);
-			break;
+			if (garden.currentLevel <= garden.maxLevel) {
+				if ((garden.escapeStatus == 1)&&(garden.currentLevel < garden.maxLevel)){
+					garden.currentLevel++;
+				};
+				garden.setup(garden.currentLevel, 1);
+				break;
+			}
 		}
 	}
 };
