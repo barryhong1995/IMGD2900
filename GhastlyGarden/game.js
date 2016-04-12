@@ -350,6 +350,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			} else if (!(y==0)) {  // If the player goes along y-axis
@@ -361,6 +362,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			};
@@ -484,6 +486,7 @@ PS.init = function( system, options ) {
 	
 	// Background music
 	PS.audioLoad("Grass", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
+	PS.audioLoad("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
 	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.5});
 };
 
