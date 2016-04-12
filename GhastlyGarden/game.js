@@ -35,11 +35,11 @@ var garden, character;
 ( function () {
 	// The following variables are for setting of the garden
 	garden = {
-		width : [3, 10, 10, 7, 17, 11, 12], // width of garden for individual levels
-		height : [9, 10, 10, 12, 14, 12, 14], // height of garden for individual levels
+		width : [3, 10, 10, 7, 17, 11, 12, 14, 22], // width of garden for individual levels
+		height : [9, 10, 10, 12, 14, 12, 14, 11, 21], // height of garden for individual levels
 		
 		currentLevel : 0, // current level
-		maxLevel : 6, // number of levels available for the game
+		maxLevel : 8, // number of levels available for the game
 		
 		wallColor : 0x778779, // color for wall of garden
 		floorColor : 0x3D3D3D, // color for floor of garden
@@ -47,6 +47,7 @@ var garden, character;
 		playerColor : 0xAB5341, // color for player
 		
 		escapeStatus : 0, // check escape status of player
+		isDead : 0, // check whether the player loses to the ghost
 		
 		// The following variables are for location of
 		// walls and floors according to each level.
@@ -135,33 +136,67 @@ var garden, character;
 				1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1,
 				1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
 				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1,
-				1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1,
+				1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1,
+				1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1,
 				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+				1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+				1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+				1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1,
+				1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1,
+				1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+				1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
 		
 		// The following variables are for location of
 		// players according to each level
-		levelPlayerX : [1, 1, 4, 3, 3, 2, 5],
-		levelPlayerY : [2, 4, 4, 7, 5, 1, 4],
-		initLevelPlayerX : [1, 1, 4, 3, 3, 2, 5],
-		initLevelPlayerY : [2, 4, 4, 7, 5, 1, 4],
+		levelPlayerX : [1, 1, 4, 3, 3, 2, 5, 5, 3],
+		levelPlayerY : [2, 4, 4, 7, 5, 1, 4, 6, 5],
+		initLevelPlayerX : [1, 1, 4, 3, 3, 2, 5, 5, 3],
+		initLevelPlayerY : [2, 4, 4, 7, 5, 1, 4, 6, 5],
 		
 		// The following variables are for location of
 		// ghost according to each level
-		levelGhostX : [1, 3, 8, 3, 13, 9, 6],
-		levelGhostY : [5, 8, 2, 3, 1, 10, 2],
-		initLevelGhostX : [1, 3, 8, 3, 13, 9, 6],
-		initLevelGhostY : [5, 8, 2, 3, 1, 10, 2],
+		levelGhostX : [1, 3, 8, 3, 13, 9, 6, 1, 1],
+		levelGhostY : [5, 8, 2, 3, 1, 10, 2, 7, 18],
+		initLevelGhostX : [1, 3, 8, 3, 13, 9, 6, 1, 1],
+		initLevelGhostY : [5, 8, 2, 3, 1, 10, 2, 7, 18],
 		
 		// The following variables are for 2nd ghosts,
 		// checking whether there is a 2nd ghosts as well as
 		// its location
-		level2ndGhostEnabled : [0, 0, 0, 0, 0, 0, 1],
-		level2ndGhostX : [0, 0, 0, 0, 0, 0, 9],
-		level2ndGhostY : [0, 0, 0, 0, 0, 0, 11],
-		initLevel2ndGhostX : [0, 0, 0, 0, 0, 0, 9],
-		initLevel2ndGhostY : [0, 0, 0, 0, 0, 0, 11],
+		level2ndGhostEnabled : [0, 0, 0, 0, 0, 0, 1, 1, 1],
+		level2ndGhostX : [0, 0, 0, 0, 0, 0, 9, 2, 16],
+		level2ndGhostY : [0, 0, 0, 0, 0, 0, 11, 9, 6],
+		initLevel2ndGhostX : [0, 0, 0, 0, 0, 0, 9, 2, 16],
+		initLevel2ndGhostY : [0, 0, 0, 0, 0, 0, 11, 9, 6],
 		
 		// drawMaze(level)
 		// Scan the map data and draw out layout of the maze
@@ -199,6 +234,7 @@ var garden, character;
 			
 			// Reset escape status
 			garden.escapeStatus = 0;
+			garden.isDead = 0;
 			
 			// Set up dimesion of level
 			PS.gridSize( garden.width[level], garden.height[level] );
@@ -312,7 +348,8 @@ var garden, character;
 				} else if ((PS.color(nx + dirX, ny) == garden.playerColor) || (PS.color(nx, ny + dirY) == garden.playerColor)){ // If player is in sight
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
-					PS.statusText("You die!");
+					PS.statusText("You die! Press SPACE to try again!");
+					garden.isDead = 1;
 				};
 			} else if (!(y==0)) {  // If the player goes along y-axis
 				if (PS.color(nx, ny + dirY) == garden.floorColor){
@@ -322,7 +359,8 @@ var garden, character;
 				} else if ((PS.color(nx + dirX, ny) == garden.playerColor) || (PS.color(nx, ny + dirY) == garden.playerColor)){ // If player is in sight
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
-					PS.statusText("You die!");
+					PS.statusText("You die! Press SPACE to try again!");
+					garden.isDead = 1;
 				};
 			};
 			
@@ -385,7 +423,8 @@ var garden, character;
 				} else if ((PS.color(nx + dirX, ny) == garden.playerColor) || (PS.color(nx, ny + dirY) == garden.playerColor)){ // If player is in sight
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
-					PS.statusText("You die!");
+					PS.statusText("You die! Press SPACE to try again!");
+					garden.isDead = 1;
 				};
 			} else if (!(y==0)) {  // If the player goes along y-axis
 				if (PS.color(nx, ny + dirY) == garden.floorColor){
@@ -395,7 +434,8 @@ var garden, character;
 				} else if ((PS.color(nx + dirX, ny) == garden.playerColor) || (PS.color(nx, ny + dirY) == garden.playerColor)){ // If player is in sight
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
-					PS.statusText("You die!");
+					PS.statusText("You die! Press SPACE to try again!");
+					garden.isDead = 1;
 				};
 			};
 			
@@ -440,6 +480,9 @@ PS.init = function( system, options ) {
 	
 	// Garden setup
 	garden.setup(currentLevel);
+	
+	// Background music
+	PS.audioPlay("Spooktune", {fileTypes: ["mp3"], path: "http://barryhong1995.github.io/GhastlyGarden/", loop: true, volume: 0.05});
 };
 
 // PS.touch ( x, y, data, options )
@@ -542,7 +585,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 119: // lower-case w
 		case 87: // upper-case W
 		{
-			if (garden.escapeStatus == 0){
+			if ((garden.escapeStatus == 0) && (garden.isDead == 0)){
 				character.move( 0, -1 );
 				if (garden.escapeStatus == 0) {
 					character.ghostWalk( 0, -1 );
@@ -559,7 +602,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 115: // lower-case s
 		case 83: // upper-case S
 		{
-			if (garden.escapeStatus == 0){
+			if ((garden.escapeStatus == 0) && (garden.isDead == 0)){
 				character.move( 0, 1 );
 				if (garden.escapeStatus == 0) {
 					character.ghostWalk( 0, 1 );
@@ -576,7 +619,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 97: // lower-case a
 		case 65: // upper-case A
 		{
-			if (garden.escapeStatus == 0){
+			if ((garden.escapeStatus == 0) && (garden.isDead == 0)){
 				character.move( -1, 0 );
 				if (garden.escapeStatus == 0) {
 					character.ghostWalk( -1, 0 );
@@ -593,7 +636,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 100: // lower-case d
 		case 68: // upper-case D
 		{
-			if (garden.escapeStatus == 0){
+			if ((garden.escapeStatus == 0) && (garden.isDead == 0)){
 				character.move( 1, 0 );
 				if (garden.escapeStatus == 0) {
 					character.ghostWalk( 1, 0 );
