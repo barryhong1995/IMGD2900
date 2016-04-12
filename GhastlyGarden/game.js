@@ -482,7 +482,7 @@ PS.init = function( system, options ) {
 	garden.setup(currentLevel);
 	
 	// Background music
-	PS.audioPlay("Spooktune", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.05});
+	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 1.00});
 };
 
 // PS.touch ( x, y, data, options )
