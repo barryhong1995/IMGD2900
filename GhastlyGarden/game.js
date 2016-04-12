@@ -35,11 +35,11 @@ var garden, character;
 ( function () {
 	// The following variables are for setting of the garden
 	garden = {
-		width : [3, 10, 10, 7, 17, 11, 12, 14, 22], // width of garden for individual levels
-		height : [9, 10, 10, 12, 14, 12, 14, 11, 21], // height of garden for individual levels
+		width : [3, 10, 10, 7, 17, 11, 11, 12, 12, 14, 22, 20], // width of garden for individual levels
+		height : [9, 10, 10, 12, 14, 12, 12, 14, 18, 11, 21, 21], // height of garden for individual levels
 		
 		currentLevel : 0, // current level
-		maxLevel : 8, // number of levels available for the game
+		maxLevel : 11, // number of levels available for the game
 		
 		wallColor : 0x778779, // color for wall of garden
 		floorColor : 0x3D3D3D, // color for floor of garden
@@ -75,7 +75,7 @@ var garden, character;
 				1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 				
 			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				1, 0, 1, 1, 0, 1, 0, 1, 0, 1,
 				1, 0, 1, 0, 0, 1, 0, 1, 1, 1,
 				1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
@@ -125,6 +125,19 @@ var garden, character;
 				1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0,
 				1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
 				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1,
+				1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1,
+				1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1,
+				1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+				1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+				1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 			   
 			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
 			    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -138,6 +151,25 @@ var garden, character;
 				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 				1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1,
 				1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1,
+				1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+				0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1,
+				1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+				1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+				1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1,
+				1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+				1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1,
+				1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1,
+				1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 				
@@ -173,30 +205,52 @@ var garden, character;
 				1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
 				1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				
+			   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+				1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1,
+				1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1,
+				1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
+				1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1,
+				1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+				1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
 		
 		// The following variables are for location of
 		// players according to each level
-		levelPlayerX : [1, 1, 4, 3, 3, 2, 5, 5, 3],
-		levelPlayerY : [2, 4, 4, 7, 5, 1, 4, 6, 5],
-		initLevelPlayerX : [1, 1, 4, 3, 3, 2, 5, 5, 3],
-		initLevelPlayerY : [2, 4, 4, 7, 5, 1, 4, 6, 5],
+		levelPlayerX : [1, 1, 4, 3, 3, 2, 4, 5, 2, 5, 3, 7],
+		levelPlayerY : [2, 4, 4, 7, 5, 1, 1, 4, 14, 6, 5, 5],
+		initLevelPlayerX : [1, 1, 4, 3, 3, 2, 4, 5, 2, 5, 3, 7],
+		initLevelPlayerY : [2, 4, 4, 7, 5, 1, 1, 4, 14, 6, 5, 5],
 		
 		// The following variables are for location of
 		// ghost according to each level
-		levelGhostX : [1, 3, 8, 3, 13, 9, 6, 1, 1],
-		levelGhostY : [5, 8, 2, 3, 1, 10, 2, 7, 18],
-		initLevelGhostX : [1, 3, 8, 3, 13, 9, 6, 1, 1],
-		initLevelGhostY : [5, 8, 2, 3, 1, 10, 2, 7, 18],
+		levelGhostX : [1, 3, 8, 3, 13, 9, 1, 6, 1, 1, 1, 3],
+		levelGhostY : [5, 8, 2, 3, 1, 10, 1, 2, 2, 7, 18, 17],
+		initLevelGhostX : [1, 3, 8, 3, 13, 9, 1, 6, 1, 1, 1, 3],
+		initLevelGhostY : [5, 8, 2, 3, 1, 10, 1, 2, 2, 7, 18, 17],
 		
 		// The following variables are for 2nd ghosts,
 		// checking whether there is a 2nd ghosts as well as
 		// its location
-		level2ndGhostEnabled : [0, 0, 0, 0, 0, 0, 1, 1, 1],
-		level2ndGhostX : [0, 0, 0, 0, 0, 0, 9, 2, 16],
-		level2ndGhostY : [0, 0, 0, 0, 0, 0, 11, 9, 6],
-		initLevel2ndGhostX : [0, 0, 0, 0, 0, 0, 9, 2, 16],
-		initLevel2ndGhostY : [0, 0, 0, 0, 0, 0, 11, 9, 6],
+		level2ndGhostEnabled : [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+		level2ndGhostX : [0, 0, 0, 0, 0, 0, 9, 9, 4, 2, 16, 13],
+		level2ndGhostY : [0, 0, 0, 0, 0, 0, 1, 11, 4, 9, 6, 11],
+		initLevel2ndGhostX : [0, 0, 0, 0, 0, 0, 9, 9, 4, 2, 16, 13],
+		initLevel2ndGhostY : [0, 0, 0, 0, 0, 0, 1, 11, 4, 9, 6, 11],
 		
 		// drawMaze(level)
 		// Scan the map data and draw out layout of the maze
@@ -429,6 +483,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			} else if (!(y==0)) {  // If the player goes along y-axis
@@ -440,6 +495,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			};
