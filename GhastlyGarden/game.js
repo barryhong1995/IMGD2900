@@ -482,7 +482,7 @@ PS.init = function( system, options ) {
 	garden.setup(currentLevel);
 	
 	// Background music
-	PS.audioPlay("Spooktune", {fileTypes: ["mp3"], path: "http://barryhong1995.github.io/GhastlyGarden/", loop: true, volume: 0.05});
+	PS.audioPlay("Spooktune", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.05});
 };
 
 // PS.touch ( x, y, data, options )
