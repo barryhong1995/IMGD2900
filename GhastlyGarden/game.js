@@ -304,9 +304,11 @@ var garden, character;
 				if (garden.currentLevel == garden.maxLevel){
 					PS.statusText("You win! You finally escape the maze!");
 					garden.escapeStatus = 1;
+					PS.audioPlay("Bell", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
 				} else {
 					PS.statusText("You win! Press SPACE to continue");
 					garden.escapeStatus = 1;
+					PS.audioPlay("Bell", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
 				}
 			}
 		},
@@ -487,6 +489,7 @@ PS.init = function( system, options ) {
 	// Background music
 	PS.audioLoad("Grass", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
 	PS.audioLoad("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
+	PS.audioLoad("Bell", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
 	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.5});
 };
 
