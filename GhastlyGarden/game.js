@@ -293,6 +293,7 @@ var garden, character;
 			PS.radius(nx, ny, 50);
 			PS.color(garden.levelPlayerX[garden.currentLevel], garden.levelPlayerY[garden.currentLevel], garden.floorColor);
 			PS.radius(garden.levelPlayerX[garden.currentLevel], garden.levelPlayerY[garden.currentLevel], 0);
+			PS.audioPlay("Grass", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
 			
 			// Update location
 			garden.levelPlayerX[garden.currentLevel] = nx;
@@ -482,7 +483,8 @@ PS.init = function( system, options ) {
 	garden.setup(currentLevel);
 	
 	// Background music
-	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 1.00});
+	PS.audioLoad("Grass", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
+	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.5});
 };
 
 // PS.touch ( x, y, data, options )
