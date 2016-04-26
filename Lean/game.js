@@ -42,18 +42,18 @@ See dygraphs License.txt, <http://dygraphs.com> and <http://opensource.org/licen
 // [system] = an object containing engine and platform information; see documentation for details
 // [options] = an object with optional parameters; see documentation for details
 
-var map, bead;
+var map, bead, timer;
 
 ( function (){
 	// The following variab.e are for the setting of the map
 	map = {
 		// Size of map
-		width : [9, 11, 9], // width of map for each level
-		height: [8, 7, 8], // height of map for each level
+		width : [9, 11, 9, 5, 7, 9], // width of map for each level
+		height: [8, 7, 8, 6, 7, 5], // height of map for each level
 		
 		// Level properties
 		currentLevel : 0,
-		maxLevel : 2,
+		maxLevel : 5,
 		
 		// Color related settings
 		wallColor : 0x000000, // color for wall 
@@ -66,7 +66,7 @@ var map, bead;
 		pointCounter : 0,
 		
 		// Gridplane for each levels
-		// 0: Wall, 1: Plane, 2: Teleportation
+		// 0: Wall, 1: Plane, 2: Point, 3: Teleportation
 		floorPlane : 0,
 		map : [[0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 2, 0, 0, 0, 0,
@@ -92,16 +92,49 @@ var map, bead;
 				1, 1, 0, 0, 0, 0, 1, 1, 1,
 				1, 1, 1, 2, 1, 0, 1, 1, 1,
 				0, 2, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 2, 1, 0,]],
+				0, 1, 1, 1, 1, 1, 2, 1, 0,],
+				
+			   [0, 0, 0, 0, 0,
+			    0, 1, 1, 1, 0,
+				0, 3, 1, 2, 0,
+				0, 1, 1, 3, 0,
+				0, 2, 1, 1, 0,
+				0, 0, 0, 0, 0],
+				
+			   [0, 0, 0, 0, 0, 0, 0,
+			    0, 1, 1, 1, 1, 0, 0,
+				0, 1, 3, 1, 1, 2, 0,
+				0, 1, 1, 1, 1, 0, 0,
+				0, 1, 1, 1, 3, 0, 0,
+				1, 1, 0, 1, 1, 1, 1,
+				0, 0, 0, 0, 0, 0, 0],
+				
+			   [0, 0, 0, 1, 3, 0, 0, 0, 0,
+			    0, 0, 2, 1, 1, 1, 1, 0, 0,
+				0, 1, 1, 0, 2, 0, 2, 1, 0,
+				0, 0, 1, 1, 1, 2, 0, 0, 0,
+				0, 0, 0, 0, 0, 3, 0, 0, 0]],
 				
 		// Location of player for each level
-		levelBallX : [4, 7, 5],
-		levelBallY : [3, 3, 1],
-		initlevelBallX : [4, 7, 5],
-		initlevelBallY : [3, 3, 1],
+		levelBallX : [4, 7, 5, 2, 3, 3],
+		levelBallY : [3, 3, 1, 3, 3, 1],
+		initlevelBallX : [4, 7, 5, 2, 3, 3],
+		initlevelBallY : [3, 3, 1, 3, 3, 1],
+		
+		// Teleportation properties
+		// Number of teleportation
+		numTp : [0, 0, 0, 2, 2, 2, 4],
+		
+		// Start Point
+		startTpX : [[], [], [], [1, 3], [2, 4], [4, 5]],
+		startTpY : [[], [], [], [2, 3], [2, 4], [0, 4]],
+		
+		// End Point
+		endTpX : [[], [], [], [3, 1], [4, 2], [5, 4]],
+		endTpY : [[], [], [], [3, 2], [4, 2], [4, 0]],
 		
 		// Amount of point in each level
-		pointAmount : [3, 3, 4],
+		pointAmount : [3, 3, 4, 2, 1],
 		
 		// drawMap(level);
 		// Scan the map data and draw out layout for corresponding level
@@ -125,7 +158,7 @@ var map, bead;
 					} else if ( data == 3 ){ // Teleportation?
 						PS.gridPlane(map.floorPlane);
 						PS.color( x, y, map.tpColor );
-						PS.radius( x, y, 50 );
+						PS.radius( x, y, 25 );
 					};
 					ptr++; // Update pointers0
 				}
@@ -160,52 +193,101 @@ var map, bead;
 	};
 	
 	character = {
-		// slide( x, y )
+		direction : 0, // 0: Static, 1: Up, 2: Down, 3: Left, 4: Right
+		
+		inMotion : 0, // Check whether the ball is currently moving
+		
+		// slide()
 		// Attempt to move ball relative to current position
-		slide : function ( x, y ) {
-			var nx, ny;
+		slide : function () {
+			character.inMotion = 1;
+			x = 0;
+			y = 0;
+			// Check for current direction of the slide
+			if (character.direction == 0) {
+				return;
+			} else if (character.direction == 1) {
+				x = 0;
+				y = -1;
+			} else if (character.direction == 2) {
+				x = 0;
+				y = 1;
+			} else if (character.direction == 3) {
+				x = -1;
+				y = 0;
+			} else if (character.direction == 4) {
+				x = 1;
+				y = 0;
+			};
 			
 			nx = map.levelBallX[map.currentLevel] + x;
 			ny = map.levelBallY[map.currentLevel] + y;
-			
-			while (!(PS.color(nx, ny)==map.wallColor)){
-				// Looping border
-				if (nx <= 0) {
-					nx = map.width[map.currentLevel]-1;
-				} else if (nx >= map.width[map.currentLevel]-1) {
-					nx = 0;
-				} else if (ny <= 0) {
-					ny = map.height[map.currentLevel]-1;
-				} else if (ny >= map.height[map.currentLevel]-1) {
-					ny = 0;
-				};
-				
-				// Pointer on the way, eat it!
-				if ( PS.color( nx, ny ) == map.pointColor ){
-					map.pointCounter++;
-				};
-				
-				// Legal move, proceed to new location
-				PS.color( nx, ny, map.ballColor );
-				PS.radius( nx, ny, 50 );
-				PS.color( map.levelBallX[map.currentLevel], map.levelBallY[map.currentLevel], map.floorColor );
-				PS.radius( map.levelBallX[map.currentLevel], map.levelBallY[map.currentLevel], 0 );
-				
-				// Update location
-				map.levelBallX[map.currentLevel] = nx;
-				map.levelBallY[map.currentLevel] = ny;
-				
-				// Continue moving to next location
-				nx += x;
-				ny += y;
+			if ((nx >= 0) && (nx <= map.width[map.currentLevel]-1) && (ny >= 0) && (ny <= map.height[map.currentLevel]-1) && (PS.color(nx, ny)==map.wallColor)){		
+				PS.timerStop(timer);
+				timer = null;
+				character.direction = 0;
+				character.inMotion = 0;
+			} else {
+				character.move(x,y);
 			};
 			
 			if (map.pointCounter >= map.pointAmount[map.currentLevel]){
 				if (map.currentLevel < map.maxLevel){
+					PS.timerStop(timer);
+					timer = null;
+					character.direction = 0;
+					character.inMotion = 0;
 					map.pointCounter = 0;
 					map.setup(map.currentLevel+1);
 				};
 			};
+		},
+		
+		// move(x, y)
+		// Attempt to make small step for the ball to bring out the animation
+		move : function(x, y) {
+			var nx, ny;
+			
+			// Ball is moving, proceed to animation
+			nx = map.levelBallX[map.currentLevel] + x;
+			ny = map.levelBallY[map.currentLevel] + y;
+			
+			// Looping border
+			if (nx < 0) {
+				nx = map.width[map.currentLevel]-1;
+			} else if (nx > map.width[map.currentLevel]-1) {
+				nx = 0;
+			} else if (ny < 0) {
+				ny = map.height[map.currentLevel]-1;
+			} else if (ny > map.height[map.currentLevel]-1) {
+				ny = 0;
+			};
+			
+			// Teleportation
+			if ( PS.color( nx, ny ) == map.tpColor ){
+				for (i = 0; i < map.numTp[map.currentLevel]; i++){
+					if ((nx == map.startTpX[map.currentLevel][i]) && (ny == map.startTpY[map.currentLevel][i])) {
+						nx = map.endTpX[map.currentLevel][i] + x;
+						ny = map.endTpY[map.currentLevel][i] + y;
+					}
+				}
+			}
+			
+			// Pointer on the way, eat it!
+			if ( PS.color( nx, ny ) == map.pointColor ){
+				map.pointCounter++;
+			};
+			
+			// Legal move, proceed to new location
+			PS.color( nx, ny, map.ballColor );
+			PS.radius( nx, ny, 50 );
+			PS.color( map.levelBallX[map.currentLevel], map.levelBallY[map.currentLevel], map.floorColor );
+			PS.radius( map.levelBallX[map.currentLevel], map.levelBallY[map.currentLevel], 0 );
+			
+			// Update location
+			map.levelBallX[map.currentLevel] = nx;
+			map.levelBallY[map.currentLevel] = ny;
+			
 		}
 	};
 }());
@@ -223,7 +305,6 @@ PS.init = function( system, options ) {
 	// Map setup
 	map.setup(currentLevel);
 
-	// Add any other initialization code you need here
 };
 
 // PS.touch ( x, y, data, options )
@@ -331,29 +412,49 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		case 119:
 		case 87:
 		{
-			character.slide(0,-1);
-			break;
+			if (character.inMotion == 0){
+				character.direction = 1;
+				timer = PS.timerStart(6, character.slide);
+				break;
+			};
 		}
 		case PS.KEY_ARROW_DOWN:
 		case 115:
 		case 83:
 		{
-			character.slide(0,1);
-			break;
+			if (character.inMotion == 0){
+				character.direction = 2;
+				timer = PS.timerStart(6, character.slide);
+				break;
+			};
 		}
 		case PS.KEY_ARROW_LEFT:
 		case 97:
 		case 65:
 		{
-			character.slide(-1,0);
-			break;
+			if (character.inMotion == 0){
+				character.direction = 3;
+				timer = PS.timerStart(6, character.slide);
+				break;
+			};
 		}
 		case PS.KEY_ARROW_RIGHT:
 		case 100:
 		case 68:
 		{
-			character.slide(1,0);
-			break;
+			if (character.inMotion == 0){
+				character.direction = 4;
+				timer = PS.timerStart(6, character.slide);
+				break;
+			};
+		}
+		case 32:
+		{
+			if (character.inMotion == 0){
+				map.pointCounter = 0;
+				map.setup(map.currentLevel);
+				break;
+			}
 		}
 	};
 };
