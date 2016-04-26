@@ -180,8 +180,8 @@ var map, bead, timer;
 			map.drawMap(level);
 			
 			// Level indication
-			PS.statusColor( PS.COLOR_WHITE );
-			PS.statusText( "Level: " + (level+1).toString() );
+			PS.statusColor( map.floorColor );
+			// PS.statusText( "" );
 			
 			// Place player at initial position
 			PS.color( map.initlevelBallX[level], map.initlevelBallY[level], map.ballColor );
