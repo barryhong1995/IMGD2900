@@ -155,10 +155,12 @@ var map, bead, timer;
 						PS.gridPlane(map.floorPlane);
 						PS.color( x, y, map.pointColor );
 						PS.radius( x, y, 50 );
+						PS.scale( x, y, 50)
 					} else if ( data == 3 ){ // Teleportation?
 						PS.gridPlane(map.floorPlane);
 						PS.color( x, y, map.tpColor );
 						PS.radius( x, y, 25 );
+						PS.scale( x, y, 75 );
 					};
 					ptr++; // Update pointers0
 				}
