@@ -56,11 +56,11 @@ var map, bead, timer;
 		maxLevel : 5,
 		
 		// Color related settings
-		wallColor : 0x000000, // color for wall 
-		floorColor : 0xADABAA, // color for floor 
-		ballColor : 0xFFFFFF, // color for ball 
-		pointColor : 0x525151, // color for point
-		tpColor : 0xD4D2D1, // color for teleportation
+		wallColor : 0x00253D, // color for wall 
+		floorColor : 0x000A0E, // color for floor 
+		ballColor : 0xFFC600, // color for ball 
+		pointColor : 0xCC0273, // color for point
+		tpColor : 0xEDF7FC, // color for teleportation
 		
 		// Game status
 		pointCounter : 0,
