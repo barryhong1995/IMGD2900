@@ -269,6 +269,7 @@ var map, bead, timer;
 					if ((nx == map.startTpX[map.currentLevel][i]) && (ny == map.startTpY[map.currentLevel][i])) {
 						nx = map.endTpX[map.currentLevel][i] + x;
 						ny = map.endTpY[map.currentLevel][i] + y;
+						PS.audioPlay("Warp", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
 					}
 				}
 			}
@@ -276,6 +277,7 @@ var map, bead, timer;
 			// Pointer on the way, eat it!
 			if ( PS.color( nx, ny ) == map.pointColor ){
 				map.pointCounter++;
+				PS.audioPlay("Coin", {fileTypes: ["wav"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
 			};
 			
 			// Legal move, proceed to new location
@@ -304,6 +306,11 @@ PS.init = function( system, options ) {
 	
 	// Map setup
 	map.setup(currentLevel);
+	
+	// Music and sound effect
+	PS.audioLoad("Coin", {fileTypes: ["wav"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
+	PS.audioLoad("Warp", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
+	PS.audioPlay("Glitz At The Ritz 2", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.25});
 
 };
 
