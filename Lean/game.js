@@ -285,6 +285,7 @@ var map, bead, timer;
 			// Legal move, proceed to new location
 			PS.color( nx, ny, map.ballColor );
 			PS.radius( nx, ny, 50 );
+			PS.scale( nx, ny, 100 );
 			PS.color( map.levelBallX[map.currentLevel], map.levelBallY[map.currentLevel], map.floorColor );
 			PS.radius( map.levelBallX[map.currentLevel], map.levelBallY[map.currentLevel], 0 );
 			
