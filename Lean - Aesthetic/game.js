@@ -67,7 +67,7 @@ var map, bead, timer;
 		ballColor : 0xFFC600, // color for ball 
 		pointColor : 0xCC0273, // color for point
 		tpColor : 0xEDF7FC, // color for teleportation
-		stoneColor : 0x3A3A3A, // color for stone
+		stoneColor : 0x00619F, // color for stone
 		
 		// Game status
 		pointCounter : 0,

@@ -71,6 +71,7 @@ var map, bead, timer;
 		
 		// Game status
 		pointCounter : 0,
+		colorOn : 0,
 		
 		// Gridplane for each levels
 		// 0: Wall, 1: Plane, 2: Point, 3: Teleportation, 4: Stone
@@ -539,6 +540,38 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 				map.pointCounter = 0;
 				map.setup(map.currentLevel);
 				break;
+			}
+		}
+		// Secret Mode: Pop Culture
+		// Can be turned on and off
+		case 33:
+		{
+			if (map.colorOn == 0){
+				if (character.inMotion == 0){
+					map.pointCounter = 0;
+					map.wallColor = 0x00253D;
+					map.floorColor = 0x000A0E;
+					map.ballColor = 0xFFC600;
+					map.pointColor = 0xCC0273;
+					map.tpColor = 0xEDF7FC;
+					map.stoneColor = 0x00619F;
+					map.colorOn = 1;
+					map.setup(map.currentLevel);
+					break;
+				}
+			} else {
+				if (character.inMotion == 0){
+					map.pointCounter = 0;
+					map.wallColor = 0x262626;
+					map.floorColor = 0x848484;
+					map.ballColor = 0xFFFFFF;
+					map.pointColor = 0x545454;
+					map.tpColor = 0xBABABA;
+					map.stoneColor = 0x3A3A3A;
+					map.colorOn = 0;
+					map.setup(map.currentLevel);
+					break;
+				}
 			}
 		}
 	};
