@@ -48,25 +48,32 @@ var map, bead, timer;
 	// The following variab.e are for the setting of the map
 	map = {
 		// Size of map
-		width : [9, 11, 9, 5, 7, 9], // width of map for each level
-		height: [8, 7, 8, 6, 7, 5], // height of map for each level
+		width : [9, 11, 9, 15, 5, 7, 9, 9, 11, 9, 11], // width of map for each level
+		height: [8, 7, 8, 14, 6, 7, 5, 7, 9, 12, 11], // height of map for each level
 		
 		// Level properties
 		currentLevel : 0,
-		maxLevel : 5,
+		maxLevel : 10,
+		
+		// Tiles & How it works:
+		// Wall: You can't move over it
+		// Floor: You are free to move
+		// Teleportation: You are warped to another teleportation in the same direction that you travel
+		// Stone: You collide with the stone and push it 1 square. It will not be pushable later on
 		
 		// Color related settings
-		wallColor : 0x00253D, // color for wall 
-		floorColor : 0x000A0E, // color for floor 
-		ballColor : 0xFFC600, // color for ball 
-		pointColor : 0xCC0273, // color for point
-		tpColor : 0xEDF7FC, // color for teleportation
+		wallColor : 0x262626, // color for wall 
+		floorColor : 0x848484, // color for floor 
+		ballColor : 0xFFFFFF, // color for ball 
+		pointColor : 0x545454, // color for point
+		tpColor : 0xBABABA, // color for teleportation
+		stoneColor : 0x3A3A3A, // color for stone
 		
 		// Game status
 		pointCounter : 0,
 		
 		// Gridplane for each levels
-		// 0: Wall, 1: Plane, 2: Point, 3: Teleportation
+		// 0: Wall, 1: Plane, 2: Point, 3: Teleportation, 4: Stone
 		floorPlane : 0,
 		map : [[0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 2, 0, 0, 0, 0,
@@ -92,7 +99,22 @@ var map, bead, timer;
 				1, 1, 0, 0, 0, 0, 1, 1, 1,
 				1, 1, 1, 2, 1, 0, 1, 1, 1,
 				0, 2, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 2, 1, 0,],
+				0, 1, 1, 1, 1, 1, 2, 1, 0],
+				
+			   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 1, 1, 0,
+				0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0,
+				0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+				0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+			    0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+                0, 1, 1, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0,
+                0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0,
+                0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,
+                0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
 				
 			   [0, 0, 0, 0, 0,
 			    0, 1, 1, 1, 0,
@@ -109,32 +131,75 @@ var map, bead, timer;
 				1, 1, 0, 1, 1, 1, 1,
 				0, 0, 0, 0, 0, 0, 0],
 				
-			   [0, 0, 0, 1, 3, 0, 0, 0, 0,
+			   [0, 0, 0, 0, 3, 0, 0, 0, 0,
 			    0, 0, 2, 1, 1, 1, 1, 0, 0,
 				0, 1, 1, 0, 2, 0, 2, 1, 0,
 				0, 0, 1, 1, 1, 2, 0, 0, 0,
-				0, 0, 0, 0, 0, 3, 0, 0, 0]],
+				0, 0, 0, 0, 0, 3, 0, 0, 0],
+				
+			   [0, 0, 0, 0, 0, 0, 1, 1, 0,
+				0, 0, 2, 1, 1, 1, 3, 2, 0,
+				0, 1, 1, 0, 1, 1, 0, 0, 0,
+				1, 1, 1, 3, 1, 1, 1, 1, 1,
+				1, 0, 0, 1, 1, 1, 0, 0, 1,
+				2, 1, 1, 1, 1, 1, 0, 1, 2,
+				0, 0, 0, 0, 0, 0, 0, 1, 0],
+				
+			   [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
+				0, 0, 1, 3, 1, 1, 0, 1, 3, 1, 0,
+				0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0,
+				0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0,
+				0, 1, 0, 0, 0, 0, 0, 1, 2, 1, 0,
+				0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0,
+				1, 1, 0, 0, 1, 0, 1, 1, 1, 2, 1,
+				0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+				
+			   [0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 			    1, 1, 1, 2, 0, 0, 0, 3, 1,
+				0, 0, 0, 0, 0, 0, 0, 1, 0,
+				0, 0, 0, 0, 0, 0, 0, 1, 0,
+				0, 0, 1, 1, 1, 1, 1, 1, 0,
+				0, 1, 4, 2, 1, 4, 0, 2, 0,
+				0, 0, 1, 1, 1, 1, 2, 4, 0,
+				0, 1, 1, 1, 3, 1, 0, 1, 0,
+				0, 1, 1, 1, 0, 1, 0, 0, 0,
+				0, 0, 0, 0, 1, 4, 1, 2, 0,
+				1, 1, 1, 1, 0, 0, 1, 1, 1,
+				0, 0, 0, 0, 0, 0, 0, 0, 0],
+				
+			   [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1,
+			    1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1,
+				1, 1, 1, 1, 0, 2, 1, 1, 1, 1, 1,
+				1, 1, 1, 1, 1, 1, 0, 1, 1, 3, 1,
+				0, 1, 1, 1, 3, 1, 0, 0, 0, 0, 0,
+				0, 0, 2, 1, 1, 0, 1, 1, 2, 0, 0,
+				0, 0, 0, 0, 0, 1, 3, 1, 1, 1, 0,
+				1, 3, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+				1, 1, 1, 1, 1, 2, 0, 1, 1, 1, 1,
+				1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1,
+				1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1]],
 				
 		// Location of player for each level
-		levelBallX : [4, 7, 5, 2, 3, 3],
-		levelBallY : [3, 3, 1, 3, 3, 1],
-		initlevelBallX : [4, 7, 5, 2, 3, 3],
-		initlevelBallY : [3, 3, 1, 3, 3, 1],
+		levelBallX : [4, 7, 5, 13, 2, 3, 3, 4, 4, 3, 9],
+		levelBallY : [3, 3, 1, 12, 3, 3, 1, 3, 3, 10, 8],
+		initlevelBallX : [4, 7, 5, 13, 2, 3, 3, 4, 4, 3, 9],
+		initlevelBallY : [3, 3, 1, 12, 3, 3, 1, 3, 3, 10, 8],
 		
 		// Teleportation properties
 		// Number of teleportation
-		numTp : [0, 0, 0, 2, 2, 2, 4],
+		numTp : [0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4],
 		
 		// Start Point
-		startTpX : [[], [], [], [1, 3], [2, 4], [4, 5]],
-		startTpY : [[], [], [], [2, 3], [2, 4], [0, 4]],
+		startTpX : [[], [], [], [], [1, 3], [2, 4], [4, 5], [6, 3], [3, 8], [4, 7], [4, 9, 1, 6]],
+		startTpY : [[], [], [], [], [2, 3], [2, 4], [0, 4], [1, 3], [1, 1], [7, 1], [4, 3, 7, 6]],
 		
 		// End Point
-		endTpX : [[], [], [], [3, 1], [4, 2], [5, 4]],
-		endTpY : [[], [], [], [3, 2], [4, 2], [4, 0]],
+		endTpX : [[], [], [], [], [3, 1], [4, 2], [5, 4], [3, 6], [8, 3], [7, 4], [9, 4, 6, 1]],
+		endTpY : [[], [], [], [], [3, 2], [4, 2], [4, 0], [3, 1], [1, 1], [1, 7], [3, 4, 6, 7]],
 		
 		// Amount of point in each level
-		pointAmount : [3, 3, 4, 2, 1],
+		pointAmount : [3, 3, 4, 4, 2, 1, 4, 4, 3, 5, 4],
 		
 		// drawMap(level);
 		// Scan the map data and draw out layout for corresponding level
@@ -161,6 +226,9 @@ var map, bead, timer;
 						PS.color( x, y, map.tpColor );
 						PS.radius( x, y, 25 );
 						PS.scale( x, y, 75 );
+					} else if ( data == 4 ){
+						PS.gridPlane(map.floorPlane);
+						PS.color( x, y, map.stoneColor );
 					};
 					ptr++; // Update pointers0
 				}
@@ -276,6 +344,12 @@ var map, bead, timer;
 				}
 			}
 			
+			// Pushing stone
+			if ( PS.color( nx, ny ) == map.stoneColor ){
+				PS.color( nx+x, ny+y, map.wallColor);
+				PS.audioPlay("Rock", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
+			}
+			
 			// Pointer on the way, eat it!
 			if ( PS.color( nx, ny ) == map.pointColor ){
 				map.pointCounter++;
@@ -312,6 +386,7 @@ PS.init = function( system, options ) {
 	
 	// Music and sound effect
 	PS.audioLoad("Coin", {fileTypes: ["wav"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
+	PS.audioLoad("Rock", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
 	PS.audioLoad("Warp", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
 	PS.audioPlay("Glitz At The Ritz 2", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.25});
 
@@ -424,7 +499,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		{
 			if (character.inMotion == 0){
 				character.direction = 1;
-				timer = PS.timerStart(6, character.slide);
+				timer = PS.timerStart(3, character.slide);
 				break;
 			};
 		}
@@ -434,7 +509,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		{
 			if (character.inMotion == 0){
 				character.direction = 2;
-				timer = PS.timerStart(6, character.slide);
+				timer = PS.timerStart(3, character.slide);
 				break;
 			};
 		}
@@ -444,7 +519,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		{
 			if (character.inMotion == 0){
 				character.direction = 3;
-				timer = PS.timerStart(6, character.slide);
+				timer = PS.timerStart(3, character.slide);
 				break;
 			};
 		}
@@ -454,7 +529,7 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 		{
 			if (character.inMotion == 0){
 				character.direction = 4;
-				timer = PS.timerStart(6, character.slide);
+				timer = PS.timerStart(3, character.slide);
 				break;
 			};
 		}
