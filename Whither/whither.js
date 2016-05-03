@@ -403,7 +403,7 @@ var W; // global namespace variable
 			],
 			
 			fadewalls : [
-				[ 2, 5, STEP3 ], [ 3, 3, STEP12 ], [ 7, 6, STEP5 ], [ 5, 5, STEP8 ]
+				[ 2, 5, STEP3 ], [ 3, 3, STEP12 ], [ 7, 6, STEP5 ], [ 5, 5, STEP13 ]
 			],
 			
 			foods : [
