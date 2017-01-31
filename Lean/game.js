@@ -386,7 +386,7 @@ var map, bead, timer;
 					if ((nx == map.startTpX[map.currentLevel][i]) && (ny == map.startTpY[map.currentLevel][i])) {
 						nx = map.endTpX[map.currentLevel][i] + x;
 						ny = map.endTpY[map.currentLevel][i] + y;
-						PS.audioPlay("Warp", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
+						PS.audioPlay("Warp", {fileTypes: ["mp3"], path: "./audio/", volume: 1.0});
 					}
 				}
 			}
@@ -394,13 +394,13 @@ var map, bead, timer;
 			// Pushing stone
 			if ( PS.color( nx, ny ) == map.stoneColor ){
 				PS.color( nx+x, ny+y, map.wallColor);
-				PS.audioPlay("Rock", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
+				PS.audioPlay("Rock", {fileTypes: ["mp3"], path: "./audio/", volume: 1.0});
 			}
 
 			// Pointer on the way, eat it!
 			if ( PS.color( nx, ny ) == map.pointColor ){
 				map.pointCounter++;
-				PS.audioPlay("Coin", {fileTypes: ["wav"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
+				PS.audioPlay("Coin", {fileTypes: ["wav"], path: "./audio/", volume: 1.0});
 			};
 
 			// Legal move, proceed to new location
@@ -432,10 +432,10 @@ PS.init = function( system, options ) {
 	map.setup(currentLevel);
 
 	// Music and sound effect
-	PS.audioLoad("Coin", {fileTypes: ["wav"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
-	PS.audioLoad("Rock", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
-	PS.audioLoad("Warp", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
-	PS.audioPlay("Glitz At The Ritz 2", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.25});
+	PS.audioLoad("Coin", {fileTypes: ["wav"], path: "./audio/"});
+	PS.audioLoad("Rock", {fileTypes: ["mp3"], path: "./audio/"});
+	PS.audioLoad("Warp", {fileTypes: ["mp3"], path: "./audio/"});
+	PS.audioPlay("Glitz At The Ritz 2", {fileTypes: ["mp3"], path: "./audio/", loop: true, volume: 0.25});
 
 };
 

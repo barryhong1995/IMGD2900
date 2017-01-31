@@ -347,7 +347,7 @@ var garden, character;
 			PS.radius(nx, ny, 50);
 			PS.color(garden.levelPlayerX[garden.currentLevel], garden.levelPlayerY[garden.currentLevel], garden.floorColor);
 			PS.radius(garden.levelPlayerX[garden.currentLevel], garden.levelPlayerY[garden.currentLevel], 0);
-			PS.audioPlay("Grass", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 1.0});
+			PS.audioPlay("Grass", {fileTypes: ["mp3"], path: "./audio/", volume: 1.0});
 			
 			// Update location
 			garden.levelPlayerX[garden.currentLevel] = nx;
@@ -358,11 +358,11 @@ var garden, character;
 				if (garden.currentLevel == garden.maxLevel){
 					PS.statusText("You win! You finally escape the maze!");
 					garden.escapeStatus = 1;
-					PS.audioPlay("Bell", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
+					PS.audioPlay("Bell", {fileTypes: ["mp3"], path: "./audio/", volume: 0.5});
 				} else {
 					PS.statusText("You win! Press SPACE to continue");
 					garden.escapeStatus = 1;
-					PS.audioPlay("Bell", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
+					PS.audioPlay("Bell", {fileTypes: ["mp3"], path: "./audio/", volume: 0.5});
 				}
 			}
 		},
@@ -406,7 +406,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
-					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "./audio/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			} else if (!(y==0)) {  // If the player goes along y-axis
@@ -418,7 +418,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
-					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "./audio/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			};
@@ -483,7 +483,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
-					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "./audio/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			} else if (!(y==0)) {  // If the player goes along y-axis
@@ -495,7 +495,7 @@ var garden, character;
 					nx = garden.levelPlayerX[garden.currentLevel];
 					ny = garden.levelPlayerY[garden.currentLevel];
 					PS.statusText("You die! Press SPACE to try again!");
-					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", volume: 0.5});
+					PS.audioPlay("Scream", {fileTypes: ["mp3"], path: "./audio/", volume: 0.5});
 					garden.isDead = 1;
 				};
 			};
@@ -543,10 +543,10 @@ PS.init = function( system, options ) {
 	garden.setup(currentLevel);
 	
 	// Background music
-	PS.audioLoad("Grass", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
-	PS.audioLoad("Scream", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
-	PS.audioLoad("Bell", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/"});
-	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "https://dl.dropboxusercontent.com/u/58392730/IMGD/2900/Sounds/", loop: true, volume: 0.5});
+	PS.audioLoad("Grass", {fileTypes: ["mp3"], path: "./audio/"});
+	PS.audioLoad("Scream", {fileTypes: ["mp3"], path: "./audio/"});
+	PS.audioLoad("Bell", {fileTypes: ["mp3"], path: "./audio/"});
+	PS.audioPlay("Old Chateau", {fileTypes: ["mp3"], path: "./audio/", loop: true, volume: 0.5});
 };
 
 // PS.touch ( x, y, data, options )
